@@ -1,0 +1,20 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Description:</b>
+  <%= @selection.description %>
+</p>
+
+<p>
+  <b>Url:</b>
+  <%= @selection.url %>
+</p>
+
+<p>
+  <b>Type:</b>
+  <%= @selection.type %>
+</p>
+
+
+<%= link_to 'Edit', edit_selection_path(@selection) %> |
+<%= link_to 'Back', selections_path %>

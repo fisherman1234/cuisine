@@ -1,0 +1,45 @@
+grammar IngredientLang
+  rule value
+     amount space unit space 'de' space ingredient
+     /
+     ingredient ':' space amount space unit
+     /
+     amount space ingredient space extra_infos
+     /
+     amount space ingredient
+  end
+
+  rule amount
+    [0-9]* / 'quelques' / '1\\4'
+  end
+
+  rule unit
+    'g' / 'pincee' / 'feuilles' / 'cuillere a soupe' / 'cuillere' / 'tranche' / 'tranches' / 'cuilleres' / 'cuilleres a soupe'
+  end
+
+
+
+  rule space
+    ' '+
+  end
+
+  rule extra_infos
+    (.)*
+  end
+
+  rule ingredient
+    word &{ |s|
+    name = s[0].text_value.to_s.singularize
+    rxp = Regexp.new("^(#{Ingredient.all.collect{|l| l.name}.join('|')})$")
+    puts name
+    puts name.match(rxp)
+    puts !name.match(rxp).nil?
+    !name.match(rxp).nil?
+    }
+  end
+
+  rule word
+    ([a-zA-Z]+)
+  end
+
+end
