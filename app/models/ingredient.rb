@@ -21,36 +21,34 @@ class Ingredient < ActiveRecord::Base
   end
 
 
-  def self.ingredient_parser(data)
-    units = %w[g cl ml kg l gouttes feuilles]
-    ingredients = Ingredient.all.collect{|l| l.name}
-    items = data.split('<br>')
+  def self.test_ingredient_parser
+    ActiveRecord::Base.logger = nil
+    Treetop.load 'grammar/ingredient_lang_parser.tt'
+    parser = IngredientLangParser.new
+    recipes = Recipe.all.sample(10).collect{|l| l.ingredients ? l.ingredients.removeaccents.downcase : ""}
+    items = recipes.collect{|l| l.split('<br>')}.collect{|l| l.split(/\r\n/)}.flatten
+    success = []
+    failure = []
     items.each do |item|
-      subitems = item.split('et')
+      subitems = item.split(' et ')
       subitems.each do |subitem|
         subitem.slice!('- ')
-        match = false
-
-        units.each do |unit|
-          subitem_match = subitem.match("(.*) #{unit} (.*)")
-          if subitem_match
-            puts "match"
-            match = true
-            puts subitem_match[1]
-            puts subitem_match[2]
-            puts subitem_match[0]
-            break
+        if subitem
+          puts "*** Debut test ***"
+          puts subitem.strip.gsub(/\//, '_')
+          match = parser.parse(subitem.strip)
+          if match
+            success.push([subitem.strip, match.ingredient.text_value])
+            puts "++++ match : #{match.ingredient.text_value}" if match
+          else
+            failure.push(subitem.strip)
+            puts '---- no match' if !match
           end
-
-        end
-
-        if !match
-          puts "no match"
-          puts subitem
         end
       end
     end
-
+    puts "success : #{success.count} / failure : #{failure.count}"
+    [failure]
   end
 
   after_create :normalize_name

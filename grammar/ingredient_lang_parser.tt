@@ -1,23 +1,41 @@
 grammar IngredientLang
   rule value
-     amount space unit space 'de' space ingredient
+     amount quant space unit space descripteur ingredient extra_infos
+     /
+     unit space descripteur amount space ingredient
      /
      ingredient ':' space amount space unit
      /
-     amount space ingredient space extra_infos
+     amount quant space ingredient extra_infos
      /
-     amount space ingredient
+     descripteur ingredient extra_infos
+     /
+     ingredient extra_infos
+     /
+     unit space 'de' space ingredient space extra_infos
   end
 
   rule amount
-    [0-9]* / 'quelques' / '1\\4'
+    'quelques' / 'un peu' / 'un' / 'deux' / 'trois' / 'quatre' / 'cinq' / 'six' / 'sept' / 'huit' / 'neuf' / 'dix' / [0-9_]*
+  end
+
+
+  rule descripteur
+    'de ' / 'd\'' / 'du'
   end
 
   rule unit
-    'g' / 'pincee' / 'feuilles' / 'cuillere a soupe' / 'cuillere' / 'tranche' / 'tranches' / 'cuilleres' / 'cuilleres a soupe'
+    'g' / 'pincee' / 'feuilles' / 'feuille' / 'cuilleres a soupe' / 'cuillere a soupe' / 'cuilleres a cafe' / 'cuillere a cafe' / 'cuilleres' / 'cuillere' / 'tranches' / 'tranche'   / 'cerneaux' / 'cerneau' / 'jus' / 'tablettes' / 'tablette' / 'boite de conserve' / 'copeaux' / 'copeau' /  'pieds' / 'pied' / 'paves' / 'pave' / 'barquettes' / 'barquette' / 'cl' / 'gousses' / 'gousse' / 'bouquets' / 'bouquet' / 'sachets' / 'sachet' / 'escalopes' / 'escalope' / 'poignees' / 'poignee'
+  end
+
+  rule quantifieur
+    'gros' / 'belle' / 'belles' / 'peu' / 'bel'
   end
 
 
+   rule quant
+     space quantifieur / ''
+   end
 
   rule space
     ' '+
@@ -28,18 +46,46 @@ grammar IngredientLang
   end
 
   rule ingredient
-    word &{ |s|
-    name = s[0].text_value.to_s.singularize
-    rxp = Regexp.new("^(#{Ingredient.all.collect{|l| l.name}.join('|')})$")
-    puts name
-    puts name.match(rxp)
-    puts !name.match(rxp).nil?
-    !name.match(rxp).nil?
-    }
+    ingredient_three_words / ingredient_two_words / ingredient_one_word
+  end
+
+  rule ingredient_three_words
+     three_words &{ |s|
+                      name = s[0].text_value.to_s.singularize
+                      rxp = Regexp.new("^(#{Ingredient.all.collect{|l| l.name}.join('|')})$")
+                      !name.match(rxp).nil?
+                      }
+  end
+
+  rule ingredient_two_words
+    two_words &{ |s|
+                  name = s[0].text_value.to_s.singularize
+                  rxp = Regexp.new("^(#{Ingredient.all.collect{|l| l.name}.join('|')})$")
+                  !name.match(rxp).nil?
+                  }
+  end
+
+  rule ingredient_one_word
+      word &{ |s|
+                    name = s[0].text_value.to_s.singularize
+                    rxp = Regexp.new("^(#{Ingredient.all.collect{|l| l.name}.join('|')})$")
+                    !name.match(rxp).nil?
+                    }
+  end
+
+  rule three_words
+    (word space word space word)
+  end
+
+  rule two_words
+    (word space word)
   end
 
   rule word
     ([a-zA-Z]+)
   end
 
+  rule ingredient_word
+    three_words / two_words / word
+  end
 end
