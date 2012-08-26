@@ -15,5 +15,10 @@
 # end
 
 ActiveSupport::Inflector.inflections do |inflect|
-  inflect.irregular 'pamplemousse', 'pamplemousses'
+  inflect.singular(/(x|ch|ss|sh)es$/i, '\1e') # pamplemousses => pamplemousse
+  inflect.singular(/([a-z])x$/i, '\1') # maquereaux => maquereau
+  inflect.irregular('noix', 'noix')
+  inflect.irregular('choux', 'choux')
+
+
 end

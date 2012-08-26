@@ -26,8 +26,9 @@ class Ingredient < ActiveRecord::Base
     ActiveRecord::Base.logger = nil
     Treetop.load 'grammar/ingredient_lang_parser.tt'
     parser = IngredientLangParser.new
-    recipes = Recipe.all.sample(10).collect{|l| l.ingredients ? l.ingredients.removeaccents.downcase : ""}
+    recipes = Recipe.all.sample(20).collect{|l| l.ingredients ? l.ingredients.removeaccents.downcase : ""}
     items = recipes.collect{|l| l.split('<br>')}.collect{|l| l.split(/\r\n/)}.flatten
+    items = items.collect{|l| l.split(/\r\n/)}.flatten
     success = []
     failure = []
     items.each do |item|
@@ -35,16 +36,16 @@ class Ingredient < ActiveRecord::Base
       subitems.each do |subitem|
         subitem.slice!('- ')
         if subitem
-          puts "*** Debut test ***"
-          subitem_strip_gsub = subitem.strip.gsub('’', "'").gsub(/\//, '_')
-          puts subitem_strip_gsub
+          #puts "*** Debut test ***"
+          subitem_strip_gsub = subitem.strip.gsub('’', "'").gsub(/\//, '_').squeeze(' ')
+          #puts subitem_strip_gsub
           match = parser.parse(subitem_strip_gsub)
           if match
             success.push([subitem.strip, match.ingredient.text_value])
-            puts "++++ match : #{match.ingredient.text_value}" if match
+            #puts "++++ match : #{match.ingredient.text_value}" if match
           else
             failure.push(subitem.strip)
-            puts '---- no match' if !match
+            #puts '---- no match' if !match
           end
         end
       end
@@ -55,7 +56,7 @@ class Ingredient < ActiveRecord::Base
 
   after_create :normalize_name
   def normalize_name
-    self.name = self.name.removeaccents.downcase.singularize
+    self.name = self.name.removeaccents.downcase.singularize.gsub(/-/, ' ').squeeze(' ')
     self.save
     true
   end
