@@ -59,7 +59,7 @@ grammar IngredientLang
   end
 
   rule unit_item
-    'kg' / 'queue' / 'dizaine' / 'quinzaine' / 'assiettes creuse' / 'assiette creuse' / 'assiettes plate' / 'assiette plate' /  'assiette' / 'pincee' / 'feuille'  / 'tranchette' / 'tranche'  / 'cerneaux' / 'cerneau' / 'jus' / 'tablette' / 'boite de conserve' / 'copeaux' / 'copeau'  / 'pied' / 'pave' / 'barquette' / 'cl'  / 'gousse' / 'bouquet'  / 'sachet' / 'escalope'  / 'poignee'  / 'boule' / 'jaune'  / 'blanc' / 'goutte' / 'ml' / 'morceaux' / 'morceau' / 'verre' / 'peu' / 'cube' / 'botte' / 'brin' / 'branche' / 'bocal' / 'litre'  / 'volume' / 'grappe' / 'boite' / 'baton' / 'etoile' / 'pot' / 'barre'  / 'sachet' / 'rondelle' / 'darne' / 'briquette' / 'brique' / 'paquet' / 'eclat' / 'baguette' / 'kilos' / 'ailerons' / 'verre a moutarde' / 'tasse'  / 'rable' / 'de' / 'carre'  / 'pointe' / 'livre' / 'trait' / 'portion' / 'flacon' / 'rouleau' / 'rondelle' / 'plaque' / 'buche' / 'bte' /  'bol' / 'cm' / 'dl' / 'tete' / cuillere_family  / 'g' / 'l'
+    'kg' / 'queue' / 'dizaine' / 'quinzaine' / 'assiettes creuse' / 'assiette creuse' / 'assiettes plate' / 'assiette plate' /  'assiette' / 'pincee' / 'feuille'  / 'tranchette' / 'tranche'  / 'cerneaux' / 'cerneau' / 'jus' / 'tablette' / 'boite de conserve' / 'copeaux' / 'copeau'  / 'pied' / 'pave' / 'barquette' / 'cl'  / 'gousse' / 'bouquet'  / 'sachet' / 'escalope'  / 'poignee'  / 'boule' / 'jaune'  / 'blanc' / 'goutte' / 'ml' / 'morceaux' / 'morceau' / 'verre' / 'peu' / 'cube' / 'botte' / 'brin' / 'branche' / 'bocal' / 'litre'  / 'volume' / 'grappe' / 'boite' / 'baton' / 'etoile' / 'pot' / 'barre'  / 'sachet' / 'rondelle' / 'darne' / 'briquette' / 'brique' / 'paquet' / 'eclat' / 'baguette' / 'kilos' / 'ailerons' / 'verre a moutarde' / 'buchette'/ 'tasse'  / 'rable' / 'de' / 'carre'  / 'pointe' / 'livre' / 'trait' / 'portion' / 'flacon' / 'rouleau' / 'rondelle' / 'plaque' / 'buche' / 'bte' /  'bol' / 'cm' / 'dl' / 'tete' / cuillere_family  / 'g' / 'l'
   end
 
   rule cuillere_family
@@ -100,7 +100,7 @@ grammar IngredientLang
 
   rule ingredient_three_words
      three_words &{ |s|
-                      name = s[0].text_value.to_s.singularize
+                      name = s[0].text_value.to_s.singularize.gsub(/-/, ' ')
                       rxp = Regexp.new("^(#{Ingredient.all.collect{|l| l.name}.join('|')})$")
                       !name.match(rxp).nil?
                       }
@@ -108,7 +108,7 @@ grammar IngredientLang
 
   rule ingredient_two_words
     two_words &{ |s|
-                  name = s[0].text_value.to_s.singularize
+                  name = s[0].text_value.to_s.singularize.gsub(/-/, ' ')
                   rxp = Regexp.new("^(#{Ingredient.all.collect{|l| l.name}.join('|')})$")
                   !name.match(rxp).nil?
                   }
@@ -116,7 +116,7 @@ grammar IngredientLang
 
   rule ingredient_one_word
       word &{ |s|
-                    name = s[0].text_value.to_s.singularize
+                    name = s[0].text_value.to_s.singularize.gsub(/-/, ' ')
                     rxp = Regexp.new("^(#{Ingredient.all.collect{|l| l.name}.join('|')})$")
                     !name.match(rxp).nil?
                     }

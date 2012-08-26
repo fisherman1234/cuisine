@@ -26,7 +26,7 @@ class Ingredient < ActiveRecord::Base
     ActiveRecord::Base.logger = nil
     Treetop.load 'grammar/ingredient_lang_parser.tt'
     parser = IngredientLangParser.new
-    recipes = Recipe.all.sample(20).collect{|l| l.ingredients ? l.ingredients.removeaccents.downcase : ""}
+    recipes = Recipe.all.sample(40).collect{|l| l.ingredients ? l.ingredients.removeaccents.downcase : ""}
     items = recipes.collect{|l| l.split('<br>')}.collect{|l| l.split(/\r\n/)}.flatten
     items = items.collect{|l| l.split(/\r\n/)}.flatten
     success = []
