@@ -1,3 +1,4 @@
+#Encoding: UTF-8
 class Ingredient < ActiveRecord::Base
   require 'open-uri'
 
@@ -35,8 +36,9 @@ class Ingredient < ActiveRecord::Base
         subitem.slice!('- ')
         if subitem
           puts "*** Debut test ***"
-          puts subitem.strip.gsub(/\//, '_')
-          match = parser.parse(subitem.strip)
+          subitem_strip_gsub = subitem.strip.gsub('’', "'").gsub(/\//, '_')
+          puts subitem_strip_gsub
+          match = parser.parse(subitem_strip_gsub)
           if match
             success.push([subitem.strip, match.ingredient.text_value])
             puts "++++ match : #{match.ingredient.text_value}" if match

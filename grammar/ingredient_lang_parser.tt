@@ -1,41 +1,63 @@
 grammar IngredientLang
   rule value
-     amount quant space unit space descripteur ingredient extra_infos
+     approximateur amount quantifieur unit approximateur descripteur ingredient extra_infos
      /
-     unit space descripteur amount space ingredient
+     unit descripteur amount space ingredient extra_infos
      /
-     ingredient ':' space amount space unit
+     ingredient ':' space amount unit
      /
-     amount quant space ingredient extra_infos
+     amount quantifieur ingredient extra_infos
      /
      descripteur ingredient extra_infos
      /
      ingredient extra_infos
      /
-     unit space 'de' space ingredient space extra_infos
+     unit 'de' space ingredient space extra_infos
+  end
+
+  rule amount_fig
+    'quelques' / 'un peu' / 'un' / 'une' /  'deux' / 'trois' / 'quatre' / 'cinq' / 'six' / 'sept' / 'huit' / 'neuf' / 'dix' / [0-9_,]*
   end
 
   rule amount
-    'quelques' / 'un peu' / 'un' / 'deux' / 'trois' / 'quatre' / 'cinq' / 'six' / 'sept' / 'huit' / 'neuf' / 'dix' / [0-9_]*
+     amount_fig ' a ' amount_fig / amount_fig ' ou ' amount_fig / amount_fig '-' amount_fig / amount_fig
   end
 
+  rule approximateur
+    ' '* 'environ' ' '* / ' '* 'bombees' ' '* / ' '* 'bombee' ' '* / ''
+  end
 
   rule descripteur
-    'de ' / 'd\'' / 'du'
+    'd\'' / 'du ' / 'de la ' / 'de l\'' / 'des ' / 'de '
+  end
+
+  rule unit_item
+    'kg'  / 'assiettes creuse' / 'assiette creuse' / 'assiettes plate' / 'assiette plate' /  'assiette' / 'pincee' / 'feuille' / cuillere_family / 'tranche'  / 'cerneaux' / 'cerneau' / 'jus' / 'tablette' / 'boite de conserve' / 'copeaux' / 'copeau'  / 'pied' / 'pave' / 'barquette' / 'cl'  / 'gousse' / 'bouquet'  / 'sachet' / 'escalope'  / 'poignee'  / 'boule' / 'jaune'  / 'blanc' / 'goutte' / 'ml' / 'morceaux' / 'morceau' / 'verre' / 'peu' / 'cube' / 'botte' / 'brin' / 'branche' / 'bocal' / 'litre'  / 'grappe' / 'boite' / 'baton' / 'etoile' / 'pot' / 'barre'  / 'sachet' / 'rondelle'/ 'litre' / 'darne' / 'brique' / 'paquet' / 'eclat' / 'baguette' / 'kilos'  / 'verre a moutarde' / 'tasse'  / 'rable' / 'de' / 'carre'  / 'pointe' / 'g' / 'l'
+  end
+
+  rule cuillere_family
+    cuillere_word ' a ' cuillere_contenant
+  end
+
+  rule cuillere_word
+    'cuillerees' / 'cuilleree' / 'cuilleres' / 'cuillere' / 'c'
+  end
+
+  rule cuillere_contenant
+    'dessert' / 'soupe' / 'cafe'
   end
 
   rule unit
-    'g' / 'pincee' / 'feuilles' / 'feuille' / 'cuilleres a soupe' / 'cuillere a soupe' / 'cuilleres a cafe' / 'cuillere a cafe' / 'cuilleres' / 'cuillere' / 'tranches' / 'tranche'   / 'cerneaux' / 'cerneau' / 'jus' / 'tablettes' / 'tablette' / 'boite de conserve' / 'copeaux' / 'copeau' /  'pieds' / 'pied' / 'paves' / 'pave' / 'barquettes' / 'barquette' / 'cl' / 'gousses' / 'gousse' / 'bouquets' / 'bouquet' / 'sachets' / 'sachet' / 'escalopes' / 'escalope' / 'poignees' / 'poignee'
+    ' '* unit_item 's ' / ' '* unit_item ' '
+  end
+
+  rule quant
+    'belle' / 'bel' / 'grosse' / 'gros' / 'petite' / 'petit'  / 'grande' / 'grand' / 'beaux' / 'beau' / 'fine' / 'fin'
   end
 
   rule quantifieur
-    'gros' / 'belle' / 'belles' / 'peu' / 'bel'
+    ' '* quant 's ' / ' '* quant ' ' / ' '*
   end
-
-
-   rule quant
-     space quantifieur / ''
-   end
 
   rule space
     ' '+
@@ -68,6 +90,7 @@ grammar IngredientLang
   rule ingredient_one_word
       word &{ |s|
                     name = s[0].text_value.to_s.singularize
+                    puts name
                     rxp = Regexp.new("^(#{Ingredient.all.collect{|l| l.name}.join('|')})$")
                     !name.match(rxp).nil?
                     }
